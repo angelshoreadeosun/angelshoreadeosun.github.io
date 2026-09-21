@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# local screenshot scratch (278MB, not part of the site)
+temporary screenshots/
+
+# source photos are already embedded in index.html as data URIs;
+# keeping the 40MB originals out of the public repo
+Brand assests/
+
+# working notes
+CLAUDE.md
+
+.DS_Store
