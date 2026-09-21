@@ -470,6 +470,9 @@
   .section {
     position: relative;
     padding: clamp(1.5rem, 3.5vh, 2.5rem) clamp(1.25rem, 5vw, 4.5rem) clamp(2.25rem, 4.5vh, 3.75rem);
+    /* clear the fixed header on an anchor jump, so a section always opens
+       on its own number and name rather than under the bar */
+    scroll-margin-top: 3.4rem;
   }
   /* sections that close on a full-width image get a little more room under it */
   #work, #shelf, #contact { padding-bottom: clamp(3rem, 6vh, 4.75rem); }
@@ -558,7 +561,7 @@
   /* less pink between the flower and the section label */
   /* its top padding is trimmed, so jumping here needs the header's height
      added back or the section label lands behind the bar */
-  #about { z-index: 2; scroll-margin-top: 3.4rem; }
+  #about { z-index: 2; }
   .section--oxblood  { background: var(--oxblood);     color: var(--buttercream); }
 
   .section-head {
