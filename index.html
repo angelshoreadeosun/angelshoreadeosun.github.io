@@ -475,7 +475,7 @@
     scroll-margin-top: 3.4rem;
   }
   /* sections that close on a full-width image get a little more room under it */
-  #work, #shelf, #contact { padding-bottom: clamp(3rem, 6vh, 4.75rem); }
+  #selected-work, #behind-the-work, #contact { padding-bottom: clamp(3rem, 6vh, 4.75rem); }
   .section--cream    { background: var(--cream-bg);    color: var(--charcoal); }
   .section--cashmere { background: var(--cashmere);    color: var(--charcoal); }
   .section--sage     { background: var(--sage);        color: var(--charcoal); }
@@ -1578,8 +1578,8 @@
   <div class="nav-links label">
     <a href="#top" aria-current="true">Home</a>
     <a href="#about">About</a>
-    <a href="#career">Career</a>
-    <a href="#shelf">Behind the work</a>
+    <a href="#where-ive-worked">Career</a>
+    <a href="#behind-the-work">Behind the work</a>
     <a href="#contact">Contact</a>
   </div>
 
@@ -1590,11 +1590,11 @@
   <a class="tab" href="#about">About</a>
   <div class="tab-group">
     <p class="tab tab--label">Career</p>
-    <a class="tab tab--sub" href="#career">Where I&rsquo;ve worked</a>
-    <a class="tab tab--sub" href="#work">Selected work</a>
-    <a class="tab tab--sub" href="#quotes">Testimonials</a>
+    <a class="tab tab--sub" href="#where-ive-worked">Where I&rsquo;ve worked</a>
+    <a class="tab tab--sub" href="#selected-work">Selected work</a>
+    <a class="tab tab--sub" href="#testimonials">Testimonials</a>
   </div>
-  <a class="tab" href="#shelf">Behind the work</a>
+  <a class="tab" href="#behind-the-work">Behind the work</a>
   <a class="tab" href="#contact">Contact</a>
 </nav>
 
@@ -1628,7 +1628,7 @@
     <div class="prose">
       <p>I&rsquo;m an experienced consultant who sits at the intersection of <strong>strategy and execution</strong>, with a focus on <strong>operations, process improvement, and project management</strong>.</p>
       <p>My work is rooted in turning complex problems into clear, practical solutions, whether that means redesigning a process, shaping a strategy, or leading a transformation. I&rsquo;ve worked with executives, frontline teams, and organizations to bring structure to ambiguity, connect the dots, and turn big ideas into meaningful outcomes.</p>
-      <p>I&rsquo;m naturally curious and a little bit of an artist at heart. Want to see more of what I do? Explore the <a class="prose-link" href="#shelf">Behind the work</a> page.</p>
+      <p>I&rsquo;m naturally curious and a little bit of an artist at heart. Want to see more of what I do? Explore the <a class="prose-link" href="#behind-the-work">Behind the work</a> page.</p>
     </div>
     </div>
 
@@ -1645,7 +1645,7 @@
 
   </section>
 
-  <section class="section section--cream" id="career">
+  <section class="section section--cream" id="where-ive-worked">
     <div class="section-head section-head--simple">
       <p class="num label">02<span class="num-name"><span class="num-slash" aria-hidden="true">/</span>Where I&rsquo;ve worked</span></p>
       <h2 class="eyebrow-lg">A record of the rooms I have worked in.</h2>
@@ -1733,7 +1733,7 @@
 
   </section>
 
-  <section class="section section--rose" id="work">
+  <section class="section section--rose" id="selected-work">
     <div class="section-head section-head--simple">
       <p class="num label">03<span class="num-name"><span class="num-slash" aria-hidden="true">/</span>Selected work</span></p>
       <h2 class="eyebrow-lg">Work I am proud of.</h2>
@@ -1771,7 +1771,7 @@
 
   </section>
 
-  <section class="section section--oxblood" id="quotes">
+  <section class="section section--oxblood" id="testimonials">
     <div class="section-head section-head--simple">
       <p class="num label">04<span class="num-name"><span class="num-slash" aria-hidden="true">/</span>Testimonials</span></p>
       <h2 class="eyebrow-lg">What it&rsquo;s like to work with me.</h2>
@@ -1862,7 +1862,7 @@
 
   </section>
 
-  <section class="section section--rose" id="shelf">
+  <section class="section section--rose" id="behind-the-work">
     <div class="section-head section-head--simple">
       <p class="num label">05<span class="num-name"><span class="num-slash" aria-hidden="true">/</span>Behind the work</span></p>
       <h2 class="eyebrow-lg">Off the clock.</h2>
@@ -2122,6 +2122,11 @@
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
+    // a fragment load jumps before the images have settled, so the first
+    // reading can be stale; re-check once everything has landed
+    window.addEventListener('load', onScroll);
+    window.addEventListener('hashchange', onScroll);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onScroll);
     update();
   })();
 </script>
