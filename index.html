@@ -753,14 +753,18 @@
   /* left print, then right: one stride per segment */
   .tl-item::before { top: 40%; left: 2px;  transform: rotate(-9deg) translateY(7px); }
   .tl-item::after  { top: 70%; left: 19px; transform: rotate(9deg) scaleX(-1) translateY(7px); }
-  /* the delay rides on a custom property: the shorthand below outranks any
+  /* someone walks through and is gone: each print fades up, holds, fades out.
+     the delay rides on a custom property because the shorthand outranks any
      plain animation-delay rule and would reset it to zero */
-  .timeline.is-visible .tl-item::before,
-  .timeline.is-visible .tl-item::after {
-    animation: step-up 0.5s var(--ease) var(--step-delay, 0s) forwards;
+  .timeline.steps-walk .tl-item::before,
+  .timeline.steps-walk .tl-item::after {
+    animation: step-through 2.4s var(--ease) var(--step-delay, 0s) both;
   }
-  @keyframes step-up {
-    to { opacity: 0.30; transform: rotate(var(--step-rot, 0deg)) var(--step-flip, ) translateY(0); }
+  @keyframes step-through {
+    0%   { opacity: 0;    transform: rotate(var(--step-rot, 0deg)) var(--step-flip, ) translateY(7px); }
+    20%  { opacity: 0.30; transform: rotate(var(--step-rot, 0deg)) var(--step-flip, ) translateY(0); }
+    60%  { opacity: 0.30; transform: rotate(var(--step-rot, 0deg)) var(--step-flip, ) translateY(0); }
+    100% { opacity: 0;    transform: rotate(var(--step-rot, 0deg)) var(--step-flip, ) translateY(0); }
   }
   .tl-item::before { --step-rot: -9deg; }
   .tl-item::after  { --step-rot: 9deg; --step-flip: scaleX(-1); }
@@ -773,10 +777,10 @@
   .tl-item:nth-last-child(3)::after  { --step-delay: 0.80s; }
   .tl-item:nth-last-child(4)::before { --step-delay: 0.94s; }
   .tl-item:nth-last-child(4)::after  { --step-delay: 1.08s; }
+  /* the effect is the passing walk; with motion off there is nothing left
+     to say, so the prints sit it out rather than becoming permanent marks */
   @media (prefers-reduced-motion: reduce) {
-    .tl-item::before, .tl-item::after { animation: none !important; opacity: 0.30; }
-    .tl-item::before { transform: rotate(-9deg); }
-    .tl-item::after  { transform: rotate(9deg) scaleX(-1); }
+    .tl-item::before, .tl-item::after { display: none; }
   }
   /* on a phone the rail hugs the left edge, so there is no room to walk */
   @media (max-width: 720px) {
@@ -2274,6 +2278,16 @@
 
 
 <script>
+  // the footsteps replay every time the timeline comes back into view, which
+  // the shared reveal observer cannot do because it unobserves on first hit
+  (function () {
+    const tl = document.querySelector('.timeline');
+    if (!tl) return;
+    new IntersectionObserver((entries) => {
+      entries.forEach((e) => tl.classList.toggle('steps-walk', e.isIntersecting));
+    }, { threshold: 0.2 }).observe(tl);
+  })();
+
   // the gallery walk: drawings drift past, but it stays a scroller you can drag.
   // it only runs while the panel is open, so no frame loop burns in the background.
   (function () {
