@@ -1374,6 +1374,46 @@
     color: var(--plum);
   }
 
+  /* gallery walk: the drawings move past you, each one matted and hung.
+     motion is the one moving idea in this panel, so the frames stay square
+     and aligned rather than tilted. */
+  .walk {
+    margin-top: var(--s-3);
+    margin-inline: calc(-1 * var(--s-3));
+    overflow-x: auto;
+    overflow-y: hidden;
+    cursor: grab;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  }
+  .walk::-webkit-scrollbar { display: none; }
+  .walk.is-dragging { cursor: grabbing; }
+  .walk:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 3px; }
+  .walk-track {
+    display: flex;
+    width: max-content;
+    padding: 0.85rem var(--s-3) 1.3rem;
+  }
+  /* the mat is deeper at the foot, the way a mounted print is trimmed */
+  .frame {
+    flex: 0 0 auto;
+    margin: 0 0.5rem;
+    width: clamp(8.5rem, 16vw, 11rem);
+    padding: 0.55rem 0.55rem 1.3rem;
+    background: #FFFFFF;
+    border: 1px solid var(--charcoal);
+    box-shadow: 0 1px 2px rgba(65, 17, 26, 0.10), 0 10px 22px rgba(65, 17, 26, 0.13);
+  }
+  .frame-art {
+    display: block;
+    aspect-ratio: 3 / 4;
+    background: var(--art) center / cover no-repeat, rgba(107, 64, 59, 0.06);
+  }
+
   /* photo gallery inside a panel */
   .gallery {
     margin-top: var(--s-3);
@@ -1910,15 +1950,17 @@
         </ul>
 
         <h4 class="panel-subhead">A little of what I make</h4>
-        <div class="gallery">
-          <div class="g-tile g-art" style="--art: var(--art-1)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-2)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-3)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-4)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-5)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-6)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-7)" role="img" aria-label="Artwork"></div>
-          <div class="g-tile g-art" style="--art: var(--art-8)" role="img" aria-label="Artwork"></div>
+        <div class="walk" tabindex="0" role="group" aria-label="Drawings, scrolls on its own; drag or use arrow keys">
+          <div class="walk-track">
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-1)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-2)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-3)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-4)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-5)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-6)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-7)" role="img" aria-label="Graphite drawing"></span></figure>
+            <figure class="frame"><span class="frame-art" style="--art: var(--art-8)" role="img" aria-label="Graphite drawing"></span></figure>
+          </div>
         </div>
       </div>
     </div>
@@ -2183,6 +2225,105 @@
 
 
 <script>
+  // the gallery walk: drawings drift past, but it stays a scroller you can drag.
+  // it only runs while the panel is open, so no frame loop burns in the background.
+  (function () {
+    const walk = document.querySelector('.walk');
+    const modal = document.querySelector('.shelf-modal');
+    if (!walk || !modal) return;
+
+    const track = walk.querySelector('.walk-track');
+    const originals = Array.from(track.children);
+    const calm = matchMedia('(prefers-reduced-motion: reduce)');
+    const SPEED = 20;                       // px/s - slower than the quotes; these are images you linger on
+    let half = 0, pos = 0, paused = false, last = null, raf = null;
+    // scroll events fire async, so a synchronous "this was me" flag is always
+    // stale by the time one lands; compare against what we last wrote instead
+    let written = -1;
+
+    // enough copies that the seam is never inside the viewport
+    const fill = () => {
+      while (track.children.length > originals.length) track.lastChild.remove();
+      const one = originals.reduce((w, el) => w + el.getBoundingClientRect().width
+        + parseFloat(getComputedStyle(el).marginLeft) * 2, 0);
+      if (!one) return;
+      const copies = Math.max(2, Math.ceil(walk.clientWidth / one) + 1);
+      for (let i = 1; i < copies; i++) {
+        originals.forEach((el) => {
+          const c = el.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          track.appendChild(c);
+        });
+      }
+      half = one;                            // one whole copy is the wrap distance
+    };
+
+    const apply = (v) => { walk.scrollLeft = v; written = walk.scrollLeft; };
+    const wrap = () => {
+      if (!half) return;
+      if (pos >= half) { pos -= half; apply(pos); }
+      else if (pos < 0) { pos += half; apply(pos); }
+    };
+
+    const tick = (t) => {
+      if (last !== null && !paused && !calm.matches) {
+        pos += SPEED * (t - last) / 1000;
+        wrap();
+        apply(pos);
+      }
+      last = t;
+      raf = requestAnimationFrame(tick);
+    };
+
+    const start = () => {
+      if (raf !== null || walk.offsetParent === null) return;
+      fill();
+      last = null;
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => { if (raf !== null) { cancelAnimationFrame(raf); raf = null; } };
+
+    modal.addEventListener('shelf:open', () => requestAnimationFrame(start));
+    modal.addEventListener('shelf:close', stop);
+    addEventListener('resize', () => { if (raf !== null) { pos = 0; apply(0); fill(); } });
+
+    walk.addEventListener('pointerenter', () => { paused = true; });
+    walk.addEventListener('pointerleave', () => { paused = false; });
+    walk.addEventListener('focusin', () => { paused = true; });
+    walk.addEventListener('focusout', () => { paused = false; });
+    walk.addEventListener('scroll', () => {
+      if (Math.abs(walk.scrollLeft - written) < 1) return;   // our own write
+      pos = walk.scrollLeft;
+      wrap();
+    }, { passive: true });
+
+    let dragging = false, startX = 0, startLeft = 0;
+    walk.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
+      dragging = true; paused = true;
+      startX = e.clientX; startLeft = walk.scrollLeft;
+      walk.classList.add('is-dragging');
+      walk.setPointerCapture(e.pointerId);
+    });
+    walk.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      e.preventDefault();
+      pos = startLeft - (e.clientX - startX);
+      wrap();
+      apply(pos);
+    });
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      walk.classList.remove('is-dragging');
+      if (e && e.pointerId !== undefined && walk.hasPointerCapture(e.pointerId)) {
+        walk.releasePointerCapture(e.pointerId);
+      }
+    };
+    walk.addEventListener('pointerup', endDrag);
+    walk.addEventListener('pointercancel', endDrag);
+  })();
+
   // Behind the work: one drawer open at a time
   (function () {
     const cards = Array.from(document.querySelectorAll('.shelf-card'));
@@ -2197,6 +2338,7 @@
       if (modal.hidden) return;
       modal.hidden = true;
       document.body.style.overflow = '';
+      modal.dispatchEvent(new CustomEvent('shelf:close'));
       cards.forEach((c) => c.setAttribute('aria-expanded', 'false'));
       if (opener) { opener.focus(); opener = null; }
     };
@@ -2211,6 +2353,7 @@
       modal.hidden = false;
       document.body.style.overflow = 'hidden';
       closeBtn.focus();
+      modal.dispatchEvent(new CustomEvent('shelf:open'));
     };
 
     cards.forEach((card) => card.addEventListener('click', () => open(card)));
