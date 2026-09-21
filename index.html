@@ -1526,14 +1526,27 @@
     opacity: 0.75;
   }
 
-    50%      { transform: translate3d(0, 4px, 0); }
+  /* clipped in place rather than parked off-canvas: a far-left offset can
+     still be exposed by an overscroll or a stray repaint */
+  .skip {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
-
-  .skip { position: absolute; left: -9999px; }
   .skip:focus {
-    left: 1rem; top: 1rem; z-index: 200;
+    position: fixed;
+    top: 1rem; left: 1rem;
+    width: auto; height: auto;
+    margin: 0; padding: 0.6rem 1rem;
+    overflow: visible;
+    clip: auto; clip-path: none;
+    z-index: 300;
     background: var(--oxblood); color: var(--buttercream);
-    padding: 0.6rem 1rem;
   }
 
   /* keep content clear of the fixed tab rail */
