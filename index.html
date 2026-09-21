@@ -171,6 +171,8 @@
     .nav { padding-left: var(--hero-frame-x); padding-right: var(--hero-frame-x); }
   }
   .nav-links a {
+    /* labels are navigation, not prose: never let one break mid-phrase */
+    white-space: nowrap;
     font-weight: 700;
     color: var(--charcoal);
     opacity: 0.68;
@@ -196,6 +198,18 @@
   }
   @media (max-width: 860px) {
     .nav-links { gap: 0.8rem; }
+  }
+  /* phone: five labels have to share the row with the icon, so trade
+     tracking and a little size for keeping every label on one line */
+  @media (max-width: 520px) {
+    .nav-links { gap: 0.5rem; }
+    .nav-links a { font-size: 0.68rem; letter-spacing: 0.05em; }
+  }
+  /* 360-wide Androids: one more notch so CONTACT is not cut off the edge */
+  @media (max-width: 404px) {
+    .nav { padding-left: 0.9rem; padding-right: 0.9rem; }
+    .nav-links { gap: 0.38rem; }
+    .nav-links a { font-size: 0.6rem; letter-spacing: 0.015em; }
   }
 
   /* ---------- folder tab rail ---------- */
