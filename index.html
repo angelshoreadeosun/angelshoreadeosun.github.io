@@ -730,6 +730,17 @@
     color: var(--buttercream);
     background: var(--oxblood);
   }
+  /* the resume's shape: the role, then the work that sat under it */
+  .tl-projects {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tl-projects .tl-tag { margin-bottom: 0; }
+
   .tl-title {
     font-family: 'Playfair Display', Georgia, serif;
     font-weight: 500;
@@ -1654,39 +1665,37 @@
     <div class="career-grid">
     <ol class="timeline">
       <li class="tl-item">
-        <div class="tl-dates"><span>Jun 2026</span><span>Present</span></div>
+        <div class="tl-dates"><span>Mar 2025</span><span>Present</span></div>
         <div class="tl-rail"><span class="tl-dot" style="background: var(--oxblood)"></span></div>
         <div class="tl-body">
-          <span class="tl-tag">Healthcare Systems Modernization</span>
-          <h3 class="tl-title">Senior Consultant, Quality Assurance &amp; Project Management</h3>
+          <h3 class="tl-title">Senior Consultant, Strategy &amp; Operations (Healthcare)</h3>
           <p class="tl-sub">Deloitte Consulting, LLP &middot; Arlington, VA</p>
-        </div>
-      </li>
-      <li class="tl-item">
-        <div class="tl-dates"><span>Mar 2025</span><span>Jun 2026</span></div>
-        <div class="tl-rail"><span class="tl-dot" style="background: var(--oxblood)"></span></div>
-        <div class="tl-body">
-          <span class="tl-tag">Healthcare Operations</span>
-          <h3 class="tl-title">Senior Consultant, Healthcare Strategy &amp; Operations</h3>
-          <p class="tl-sub">Deloitte Consulting, LLP &middot; Arlington, VA</p>
+          <ul class="tl-projects">
+            <li class="tl-tag">Medicaid System Implementation</li>
+            <li class="tl-tag">Health System Transformation</li>
+          </ul>
         </div>
       </li>
       <li class="tl-item">
         <div class="tl-dates"><span>Jun 2023</span><span>Mar 2025</span></div>
         <div class="tl-rail"><span class="tl-dot" style="background: var(--plum)"></span></div>
         <div class="tl-body">
-          <span class="tl-tag">Organizational Transformation</span>
-          <h3 class="tl-title">Consultant, Transformation Strategy &amp; Project Management</h3>
+          <h3 class="tl-title">Consultant, Transformation Strategy &amp; Operations</h3>
           <p class="tl-sub">Deloitte Consulting, LLP &middot; Arlington, VA</p>
+          <ul class="tl-projects">
+            <li class="tl-tag">Organizational Transformation</li>
+          </ul>
         </div>
       </li>
       <li class="tl-item">
-        <div class="tl-dates"><span>Oct 2022</span><span>Jun 2023</span></div>
+        <div class="tl-dates"><span>Oct 2022</span><span>May 2023</span></div>
         <div class="tl-rail"><span class="tl-dot" style="background: var(--cacao)"></span></div>
         <div class="tl-body">
-          <span class="tl-tag">Technology Modernization</span>
           <h3 class="tl-title">Analyst, IT Modernization Project Management</h3>
           <p class="tl-sub">Deloitte Consulting, LLP &middot; Arlington, VA</p>
+          <ul class="tl-projects">
+            <li class="tl-tag">Technology Modernization</li>
+          </ul>
         </div>
       </li>
     </ol>
@@ -1766,6 +1775,15 @@
         <h3 class="work-title">Defining the future state for enterprise-wide transformation</h3>
         <div class="work-thumb work-thumb--4x3" aria-hidden="true" style="background-image: var(--work-img-3)"></div>
         <p class="work-desc work-desc--after">Working across 9+ workstreams, I assessed 36 business functions across the organization to identify performance gaps, benchmark current practices against industry standards, and determine what was feasible within existing constraints. I translated those findings into a prioritized roadmap with clear ownership, sequencing, and actions for execution.</p>
+      </article>
+      <article class="work-card" data-reveal>
+        <div class="work-card-top">
+          <span class="work-n">04</span>
+          <span class="work-cat">Healthcare AI &amp; Product</span>
+        </div>
+        <h3 class="work-title">Taking an AI shift-handoff tool from discovery to pilot</h3>
+        <div class="work-thumb work-thumb--4x3" aria-hidden="true" style="background-image: var(--work-thumb)"></div>
+        <p class="work-desc work-desc--after">Led discovery with 20 bedside nurses to map how shift handoffs actually run under SBAR and I-PASS, then turned those findings into the problem statement and MVP scope for an AI-assisted handoff tool. Directed the build with engineering, prioritizing signal quality, clinician trust, and zero EHR integration, and took it into an active pilot.</p>
       </article>
     </div>
 
